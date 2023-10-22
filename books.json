@@ -3,7 +3,7 @@
     "Title": ["Farewell to Arms"],
     "Author": ["Ernest Hemingway"],
     "Publisher": ["Charles Scribner's Sons"],
-    "Year of Publication": [1929],
+    "Publication": [1929],
     "Theme": ["War and Love"]
   },
   "War and Peace": {
@@ -17,7 +17,7 @@
     "Title": ["International Law: Laws, Norms, Actors: A Problem-Oriented Approach"],
     "Author": ["Jeffrey L. Dunoff and Steven R. Ratner"],
     "Publisher": ["Wolters Kluwer"],
-    "Year of Publication": [2020],
+    "Publication": [2020],
     "Theme": ["International Law"]
   }
 }
