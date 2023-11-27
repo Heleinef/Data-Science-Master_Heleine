@@ -82,11 +82,3 @@ S,STATEN ISLAND,466,881,192,150,3,65,1,8,0,39,0,10
 121,121st Precinct,150,288,56,56,0,17,0,1,0,8,0,1
 122,122nd Precinct,147,281,65,45,3,29,1,1,0,12,0,1
 123,123rd Precinct,61,110,27,16,0,7,0,2,0,8,0,2
-NOTES:,,,,,,,,,,,,,
-"The persons involved reflects all motorists, however they do not reflect other persons involved unless they were injured or killed.",,,,,,,,,,,,,
-The category of “Motorist” includes the owner of a parked vehicle. Contributing factors are listed when known.,,,,,,,,,,,,,
-All figures are preliminary and subject to change.,,,,,,,,,,,,,
-"A collision at an intersection located on a precinct border may appear in the list of intersections of any precinct that shares that intersection,",,,,,,,,,,,,,
-but will appear in only one precinct list. Collision location is captured as the nearest intersection.,,,,,,,,,,,,,
-"A collision on a highway, bridge or tunnel which occurs at or near a precinct border may appear in the list of highways, bridges or tunnels of any precinct",,,,,,,,,,,,,
-"that shares that location, but will appear in only one precinct list. Collision location is captured as the nearest highway/bridge/tunnel reference/mile marker.",,,,,,,,,,,,,
