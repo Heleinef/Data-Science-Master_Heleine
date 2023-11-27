@@ -1,0 +1,95 @@
+﻿Motor Vehicle Collision Report Statistics Citywide,,,,,,,,,,,,,
+January 2019,,,,,,,,,,,,,
+Collisions,,,,,,,,,,,,,
+GeoCode,GeoCodeLabel,Number_of_Motor_Vehicle_Collisions,Vehicles_or_Motorists_Involved,Injury_or_Fatal_Collisions,MotoristsInjured,MotoristsKilled,PassengInjured,PassengKilled,CyclistsInjured,CyclistsKilled,PedestrInjured,PedestrKilled,Bicycle
+C,CITYWIDE,16686,32816,3313,1906,3,1221,3,210,3,1010,10,263
+M,MANHATTAN,3123,6032,477,201,1,166,0,64,0,181,1,84
+001,1st Precinct,196,364,26,6,0,5,0,3,0,15,0,4
+005,5th Precinct,161,306,25,12,0,7,0,4,0,5,0,5
+006,6th Precinct,101,199,10,3,0,2,0,2,0,5,0,3
+007,7th Precinct,84,166,16,8,0,12,0,4,0,4,0,5
+009,9th Precinct,87,165,16,6,0,1,0,3,0,6,0,4
+010,10th Precinct,177,334,23,7,0,2,0,2,0,14,0,2
+013,13th Precinct,204,382,40,19,0,4,0,6,0,17,0,7
+014,Midtown South Precinct,205,389,26,9,0,11,0,6,0,8,0,10
+017,17th Precinct,246,471,47,16,0,19,0,13,0,12,0,13
+018,Midtown North Precinct,267,514,27,8,0,7,0,3,0,12,0,5
+019,19th Precinct,329,659,40,28,0,14,0,4,0,9,1,4
+020,20th Precinct,128,243,22,3,0,6,0,4,0,11,0,4
+022,Central Park Precinct,8,16,0,0,0,0,0,0,0,0,0,0
+023,23rd Precinct,107,203,19,7,0,11,0,3,0,7,0,5
+024,24th Precinct,75,146,12,4,0,2,0,2,0,5,0,2
+025,25th Precinct,163,319,31,19,0,15,0,0,0,12,0,1
+026,26th Precinct,68,136,11,7,0,2,0,0,0,4,0,0
+028,28th Precinct,72,136,20,8,0,20,0,2,0,7,0,2
+030,30th Precinct,59,121,8,3,0,4,0,0,0,3,0,0
+032,32nd Precinct,111,211,13,5,0,6,0,0,0,9,0,3
+033,33rd Precinct,123,238,16,9,1,2,0,2,0,6,0,4
+034,34th Precinct,152,314,29,14,0,14,0,1,0,10,0,1
+B,BRONX,2717,5359,554,330,1,234,1,16,0,164,1,23
+040,40th Precinct,300,580,64,33,0,29,0,4,0,17,1,5
+041,41st Precinct,142,279,21,13,0,7,0,1,0,6,0,1
+042,42nd Precinct,137,267,27,14,0,8,0,1,0,11,0,2
+043,43rd Precinct,317,625,65,41,0,28,0,1,0,18,0,1
+044,44th Precinct,249,490,49,24,0,24,0,5,0,16,0,6
+045,45th Precinct,257,511,65,43,1,31,0,0,0,13,0,0
+046,46th Precinct,188,383,31,16,0,9,0,0,0,12,0,1
+047,47th Precinct,316,636,64,45,0,27,1,0,0,17,0,1
+048,48th Precinct,194,382,34,20,0,11,0,1,0,10,0,2
+049,49th Precinct,199,400,43,32,0,24,0,0,0,10,0,0
+050,50th Precinct,165,310,41,25,0,8,0,1,0,16,0,1
+052,52nd Precinct,253,496,50,24,0,28,0,2,0,18,0,3
+K,BROOKLYN,4854,9515,1041,543,0,392,0,79,3,333,5,98
+060,60th Precinct,167,335,32,23,0,12,0,1,0,8,0,1
+061,61st Precinct,221,433,50,22,0,16,0,1,0,17,1,1
+062,62nd Precinct,226,443,45,14,0,14,0,3,1,19,1,4
+063,63rd Precinct,222,445,53,35,0,22,0,2,0,12,0,2
+066,66th Precinct,237,448,51,17,0,10,0,7,0,25,0,7
+067,67th Precinct,287,576,91,51,0,46,0,3,0,28,0,3
+068,68th Precinct,217,424,36,12,0,5,0,3,0,18,1,3
+069,69th Precinct,174,356,45,27,0,27,0,1,0,7,0,1
+070,70th Precinct,255,484,66,23,0,27,0,7,0,30,0,10
+071,71st Precinct,158,303,39,25,0,20,0,2,0,11,0,3
+072,72nd Precinct,252,495,46,25,0,13,0,4,1,13,1,5
+073,73rd Precinct,174,334,57,31,0,26,0,1,0,19,0,1
+075,75th Precinct,531,1050,109,73,0,63,0,4,1,30,0,7
+076,76th Precinct,134,266,21,12,0,5,0,0,0,6,0,0
+077,77th Precinct,171,330,44,20,0,14,0,6,0,15,0,7
+078,78th Precinct,133,272,23,12,0,2,0,5,0,5,0,6
+079,79th Precinct,180,350,26,11,0,7,0,3,0,6,0,6
+081,81st Precinct,91,178,19,8,0,4,0,3,0,7,0,3
+083,83rd Precinct,208,410,42,24,0,15,0,3,0,13,0,4
+084,84th Precinct,237,465,38,24,0,11,0,5,0,11,0,6
+088,88th Precinct,129,245,32,19,0,8,0,5,0,11,0,5
+090,90th Precinct,278,530,55,25,0,17,0,8,0,17,1,11
+094,94th Precinct,172,343,21,10,0,8,0,2,0,5,0,2
+Q,QUEENS,5061,10080,1055,688,1,356,2,50,0,287,3,56
+100,100th Precinct,54,105,11,9,0,1,0,0,0,3,0,0
+101,101st Precinct,75,139,10,5,0,1,0,1,0,4,0,1
+102,102nd Precinct,310,634,50,33,0,24,0,2,0,11,0,3
+103,103rd Precinct,253,501,55,28,0,25,0,1,0,17,0,2
+104,104th Precinct,335,669,66,43,0,12,0,2,0,17,1,2
+105,105th Precinct,543,1107,123,108,0,40,0,0,0,18,0,1
+106,106th Precinct,383,789,90,61,1,27,1,2,0,17,0,2
+107,107th Precinct,338,675,70,45,0,35,0,1,0,20,0,1
+108,108th Precinct,369,722,67,39,0,19,0,5,0,19,0,6
+109,109th Precinct,596,1166,128,84,0,34,0,8,0,42,0,9
+110,110th Precinct,275,535,65,35,0,21,0,7,0,26,1,8
+111,111th Precinct,341,683,57,45,0,21,1,1,0,13,0,1
+112,112th Precinct,235,475,53,33,0,13,0,0,0,18,0,0
+113,113th Precinct,312,627,62,40,0,32,0,3,0,15,0,3
+114,114th Precinct,369,718,85,42,0,20,0,10,0,31,1,10
+115,115th Precinct,273,535,63,38,0,31,0,7,0,16,0,7
+S,STATEN ISLAND,931,1830,186,144,0,73,0,1,0,45,0,2
+120,120th Precinct,221,435,54,41,0,23,0,0,0,16,0,1
+121,121st Precinct,287,566,47,37,0,24,0,1,0,12,0,1
+122,122nd Precinct,296,592,65,46,0,23,0,0,0,14,0,0
+123,123rd Precinct,127,237,20,20,0,3,0,0,0,3,0,0
+NOTES:,,,,,,,,,,,,,
+"The persons involved reflects all motorists, however they do not reflect other persons involved unless they were injured or killed.",,,,,,,,,,,,,
+The category of “Motorist” includes the owner of a parked vehicle. Contributing factors are listed when known.,,,,,,,,,,,,,
+All figures are preliminary and subject to change.,,,,,,,,,,,,,
+"A collision at an intersection located on a precinct border may appear in the list of intersections of any precinct that shares that intersection,",,,,,,,,,,,,,
+but will appear in only one precinct list. Collision location is captured as the nearest intersection.,,,,,,,,,,,,,
+"A collision on a highway, bridge or tunnel which occurs at or near a precinct border may appear in the list of highways, bridges or tunnels of any precinct",,,,,,,,,,,,,
+"that shares that location, but will appear in only one precinct list. Collision location is captured as the nearest highway/bridge/tunnel reference/mile marker.",,,,,,,,,,,,,
