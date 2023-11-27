@@ -1,7 +1,4 @@
-﻿Motor Vehicle Collision Report Statistics Citywide/September 2023,,,,,,,,,,,,,
-September 2023,,,,,,,,,,,,,
-Collisions,,,,,,,,,,,,,
-GeoCode,GeoCodeLabel,Number_of_Motor_Vehicle_Collisions,Vehicles_or_Motorists_Involved,Injury_or_Fatal_Collisions,MotoristsInjured,MotoristsKilled,PassengInjured,PassengKilled,CyclistsInjured,CyclistsKilled,PedestrInjured,PedestrKilled,Bicycle
+﻿GeoCode,GeoCodeLabel,Number_of_Motor_Vehicle_Collisions,Vehicles_or_Motorists_Involved,Injury_or_Fatal_Collisions,MotoristsInjured,MotoristsKilled,PassengInjured,PassengKilled,CyclistsInjured,CyclistsKilled,PedestrInjured,PedestrKilled,Bicycle
 C,CITYWIDE,8136,15512,3546,2053,6,1378,4,514,3,723,6,628
 M,MANHATTAN,1395,2477,576,238,0,181,1,148,1,134,3,202
 001,1st Precinct,67,125,19,6,0,4,0,9,0,3,0,10
