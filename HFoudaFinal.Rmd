@@ -1,0 +1,681 @@
+---
+title: "Final_Data605"
+author: "Heleine Fouda"
+date: "2024-05-19"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+## Getting started: Setting up the environment
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Install necessary package
+
+# Load necessary libraries
+library(tidyverse)
+library(MASS)
+library(e1071)
+library(psych)
+library(dplyr)
+library(ggplot2)
+
+library(gridExtra)
+
+
+# Load the dataset
+data <- read.csv("https://raw.githubusercontent.com/Heleinef/Data-Science-Master_Heleine/main/train_csv.csv")
+train = data
+
+```
+
+## Data Exploration
+
+```{r}
+# Display the first few rows of the dataset
+head(train)
+```
+
+## Explore the variables
+
+```{r}
+# Select quantitative variables
+quantitative_vars <- train %>%
+  select_if(is.numeric)
+head(quantitative_vars)
+```
+
+```{r}
+# Check skewness of each quantitative variable
+skewness <- quantitative_vars %>%
+  summarise(across(everything(), ~ skewness(.x))) %>%
+  gather(variable, skewness) %>%
+  arrange(desc(skewness)) %>%
+  head(5)
+# Print skewness of quantitative variables
+print("Skewness of quantitative variables:")
+print(skewness)
+
+```
+
+```{r }
+# Plot the distribution of a highly skewed variable
+skewed_variable <- skewness$variable[1]
+ggplot(data, aes_string(x =  skewed_variable)) +
+  geom_histogram(bins = 30, fill = "seagreen", alpha = 0.7) +
+  ggtitle(paste("Distribution of", skewed_variable)) +
+  theme_minimal()
+
+```
+
+### Select a right-skewed variable for X and define Y:
+
+```{r}
+# Define X and Y
+X <- train$LotArea
+Y <- train$SalePrice
+
+# Print first few values of X and Y
+print("X (LotArea):")
+head(X)
+print("Y (SalePrice):")
+head(Y)
+
+```
+
+### Verify the skewness and plot the distribution of X to ensure it is right-skewed:
+
+```{r}
+# Distribution of Lot Area, our selected X variable
+skewed_variable <- "LotArea"
+
+# Verify the skewness of LotArea
+lotarea_skewness <- skewness(X, na.rm = TRUE)
+print(paste("Skewness of LotArea:", lotarea_skewness))
+
+# Plot the distribution of LotArea
+ggplot(data, aes(x = LotArea)) +
+  geom_histogram(bins = 30, fill = "pink", alpha = 0.7) +
+  ggtitle("Distribution of LotArea") +
+  theme_minimal()
+
+```
+
+## Probability
+
+### Calculate the 3rd quartile of X and the 2nd quartile of Y:
+
+```{r }
+# Calculate the 3rd quartile of X (LotArea)
+x_3rd_quartile <- quantile(X, 0.75, na.rm = TRUE)
+
+# Calculate the 2nd quartile (median) of Y (SalePrice)
+y_2nd_quartile <- quantile(Y, 0.50, na.rm = TRUE)
+
+# Print the quartiles
+print(paste("3rd Quartile of X (LotArea):", x_3rd_quartile))
+print(paste("2nd Quartile of Y (SalePrice):", y_2nd_quartile))
+
+```
+
+### Calculate the probabilities:
+
+a.  $P(X>x∣Y>y)$
+b.  $P(X>x,Y>y)$
+c.  $P(X<x∣Y>y)$
+
+```{r}
+# Calculate P(X > x)
+P_X_greater_x <- sum(X > x_3rd_quartile) / length(X)
+
+# Calculate P(Y > y)
+P_Y_greater_y <- sum(Y > y_2nd_quartile) / length(Y)
+
+# Calculate P(X > x, Y > y)
+P_X_greater_x_and_Y_greater_y <- sum(X > x_3rd_quartile & Y > y_2nd_quartile) / length(X)
+
+# Calculate P(X > x | Y > y)
+P_X_greater_x_given_Y_greater_y <- P_X_greater_x_and_Y_greater_y / P_Y_greater_y
+
+# Calculate P(X < x | Y > y)
+P_X_less_x_given_Y_greater_y <- 1 - P_X_greater_x_given_Y_greater_y
+
+# Print the probabilities with 4 decimal digits
+cat(sprintf("P(X > x | Y > y): %.4f\n", P_X_greater_x_given_Y_greater_y))
+cat(sprintf("P(X > x, Y > y): %.4f\n", P_X_greater_x_and_Y_greater_y))
+cat(sprintf("P(X < x | Y > y): %.4f\n", P_X_less_x_given_Y_greater_y))
+
+```
+
+### Interpret the probabilities:
+
+a.  \$P(X\>x∣Y\>y): \$ This is the conditional probability that Lot Area is greater than its 3rd quartile given that Sale Price is greater than its median. It tells us how likely a lot area is large if the house price is above the median. That probability is 0.3791. This means that given the Sale Price is above the median, there is a 37.91% chance that the Lo tArea is above the 3rd quartile.
+b.  \$P(X\>x,Y\>y): \$ This is the joint probability that Lot Area is greater than its 3rd quartile and Sale Price is greater than its median. It gives the likelihood of both events happening simultaneously. That probability is estimated at 0.1890. This indicates that there is an 18.90% chance that both the Lot Area is above the 3rd quartile and the Sale Price is above the median simultaneously.
+c.  $P(X<x∣Y>y):$ This is the conditional probability that Lot Area is less than its 3rd quartile given that Sale Price is greater than its median. It tells us how likely a lot area is small if the house price is above the median. This probability is estimated at 0.6209. This means that given the Sale Price is above the median, there is a 62.09% chance that the Lot Area is below the 3rd quartile.
+
+```{r}
+# Calculate the counts for the table
+counts_table <- table(X <= quantile(X, 0.5), Y <= quantile(Y, 0.5))
+
+# Add row and column names
+rownames(counts_table) <- c("<= 3rd quartile", "> 3rd quartile")
+colnames(counts_table) <- c("<= 2nd quartile", "> 2nd quartile")
+
+# Add totals
+counts_table <- addmargins(counts_table)
+
+# Print the table
+print("Counts Table:")
+print(counts_table)
+
+```
+
+### Calculate the conditional probability of A given B
+
+```{r}
+# Calculate the counts for A (observations above the 3rd quartile for X)
+count_A <- sum(X > quantile(X, 0.75))
+
+# Calculate the counts for B (observations above the 2nd quartile for Y)
+count_B <- sum(Y > quantile(Y, 0.50))
+
+# Calculate the counts for both A and B
+count_A_and_B <- sum(X > quantile(X, 0.75) & Y > quantile(Y, 0.50))
+
+# Calculate P(A|B)
+P_A_given_B <- count_A_and_B / count_B
+
+# Calculate P(A)
+P_A <- count_A / length(X)
+
+# Calculate P(B)
+P_B <- count_B / length(Y)
+
+print(P_A_given_B)
+print(P_A )
+print(P_B)
+```
+
+### Checking whether the conditional probability of A given B is equal to the probability of A times the probability of B
+
+```{r}
+# Check if P(A|B) = P(A) * P(B)
+if (round(P_A_given_B, 4) == round(P_A * P_B, 4)) {
+  print("P(A|B) = P(A) * P(B)")
+} else {
+  print("P(A|B) != P(A) * P(B)")
+}
+```
+
+### Chi-Square test for association
+
+```{r}
+observed <- c(count_A_and_B, count_A - count_A_and_B, count_B - count_A_and_B, length(X) - (count_A + count_B - count_A_and_B))
+expected <- c(P_A_given_B * count_B, (1 - P_A_given_B) * count_B, P_A_given_B * (length(X) - count_B), (1 - P_A_given_B) * (length(X) - count_B))
+chisq <- sum((observed - expected)^2 / expected)
+
+# Calculate the degrees of freedom
+df <- 1
+
+# Calculate the p-value
+p_value <- pchisq(chisq, df, lower.tail = FALSE)
+
+# Print the results
+print(paste("Chi-Square statistic:", chisq))
+print(paste("Degrees of freedom:", df))
+print(paste("p-value:", p_value))
+```
+
+## Descriptive and Inferential Statistics.
+
+### Univariate Descriptive Statistics and Plots:
+
+```{r}
+# Univariate descriptive statistics
+summary(train)
+
+# Histogram of X (LotArea)
+ggplot(train, aes(x = LotArea)) +
+  geom_histogram(fill = "seagreen", alpha = 0.7) +
+  ggtitle("Histogram of LotArea") +
+  theme_minimal()
+
+# Histogram of Y (SalePrice)
+ggplot(train, aes(x = SalePrice)) +
+  geom_histogram(bins = 39, fill = "seagreen", alpha = 0.7) +
+  ggtitle("Histogram of SalePrice") +
+   theme_minimal()
+```
+
+### Scatterplot of X and Y:
+
+```{r}
+# Scatterplot of X and Y with 
+ggplot(data, aes(x = LotArea, y = SalePrice)) +
+  geom_point(color = "seagreen", alpha = 0.3) +  # Set color to blue and alpha to 0.5
+  ggtitle("Scatterplot of LotArea vs SalePrice") +
+  theme_minimal()
+```
+
+### 95% Confidence Interval for the Difference in Means:
+
+```{r}
+# Calculate the difference in means
+mean_diff <- mean(train$LotArea) - mean(train$SalePrice)
+
+# Calculate standard error
+se_diff <- sqrt(var(train$LotArea) / length(train$LotArea) + var(train$SalePrice) / length(train$SalePrice))
+
+# Calculate the 95% confidence interval
+ci_lower <- mean_diff - 1.96 * se_diff
+ci_upper <- mean_diff + 1.96 * se_diff
+
+# Print the confidence interval
+print(paste("95% CI for the difference in means:", ci_lower, "-", ci_upper))
+
+```
+
+```{r}
+# Test the hypothesis that the correlation is 0 and provide a 99% confidence interval
+
+# Convert X and Y to numeric, replacing non-numeric values with NA
+train <- train %>% 
+  mutate(X = as.numeric(X),
+         Y = as.numeric(Y))
+
+# Test the hypothesis that the correlation is 0 and provide a 99% confidence interval
+cor_test_99 <- cor.test(train$X, train$Y, conf.level = 0.99)
+
+# Print the results of the hypothesis test and confidence interval
+print("Hypothesis Test Results (99% confidence level):")
+print(cor_test_99)
+```
+
+### Correlation Matrix and Hypothesis Testing:
+
+```{r}
+# Correlation matrix for LotArea and SalePrice
+cor_matrix <- cor(train[c("LotArea", "SalePrice")])
+
+# Print the correlation matrix
+print("Correlation Matrix:")
+print(cor_matrix)
+
+# Test the hypothesis that the correlation is 0
+cor_test <- cor.test(train$LotArea, train$SalePrice)
+
+# Print the results of the hypothesis test
+print("Hypothesis Test Results:")
+print(cor_test)
+
+```
+
+## Meaning of the results obtained during Descriptive and Inferential Statistics
+
+The above descriptive and inferential statistics analysis provided insights into the descriptive characteristics of variables X ("LotArea" ) and Y (SalePrice"), allowing us to assess the strength and significance of their relationship.
+
+-   Univariate Descriptive Statistics and Plots provided summaries of the central tendency, dispersion, and shape of the distributions of "LotArea" and "SalePrice";
+
+-   Histograms visualized the distributions of "LotArea" and "SalePrice", allowing us to understand their spread and identify any potential outliers;
+
+-   Scatterplot of LotArea and SalePrice visually displays the relationship between "LotArea" and "SalePrice". Each point representing an observation in the dataset, with "LotArea" on the x-axis and "SalePrice" on the y-axis;
+
+-   The scatterplot also helps us assess if there is any discernible pattern or trend between "LotArea" and "SalePrice".
+
+95% Confidence Interval for the Difference in Means:
+
+-   The confidence interval provides a range of values within which we are 95% confident that the true difference in means between "LotArea" and "SalePrice" lies. If the confidence interval includes zero, it suggests that there is no statistically significant difference between the means of "LotArea" and "SalePrice".
+
+-   Correlation Matrix and Hypothesis Testing:
+
+The correlation matrix quantifies the strength and direction of the linear relationship between "LotArea" and "SalePrice". - A correlation coefficient close to +1 indicates a strong positive linear relationship, close to -1 indicates a strong negative linear relationship, and close to 0 indicates no linear relationship. - The hypothesis test determines whether the observed correlation coefficient is significantly different from zero. A low p-value (typically below the chosen significance level, e.g., 0.05) indicates that the correlation is statistically significant, suggesting a meaningful relationship between "LotArea" and "SalePrice".
+
+## Linear Algebra and Correlation.
+
+```{r}
+# Load necessary library
+library(psych)
+
+# Invert the correlation matrix to obtain the precision matrix
+precision_matrix <- solve(cor_matrix)
+
+# Multiply the correlation matrix by the precision matrix
+cor_precision_multiply <- cor_matrix %*% precision_matrix
+
+# Multiply the precision matrix by the correlation matrix
+precision_cor_multiply <- precision_matrix %*% cor_matrix
+
+# Perform principal component analysis (PCA)
+pca_result <- principal(cor_matrix, nfactors = 2, rotate = "none")
+
+# Print the PCA results
+print("PCA Results:")
+print(pca_result)
+
+# Interpretation
+# The PCA results provide information about the underlying structure of the variables.
+# The loadings indicate the correlation between the original variables and the principal components.
+# The eigenvalues represent the variance explained by each principal component.
+# The proportion of variance explained by each component can be used to assess the contribution of each component to the total variance.
+# By examining the loadings and eigenvalues, we can identify which variables contribute most to each principal component and understand the relationships between variables in the dataset.
+
+```
+
+### Discussion:
+
+PCA helps in identifying patterns and relationships between variables in the dataset. It reduces the dimensionality of the data while retaining most of its variability, making it easier to interpret and visualize. By examining the loadings and eigenvalues, we gain insights into the underlying structure of the dataset and the relationships between variables. PCA can be used for data reduction, feature selection, and data visualization, making it a valuable tool in exploratory data analysis and dimensionality reduction techniques.
+
+## Calculus-Based Probability & Statistics.
+
+### Shift the Skewed Variable: Shift the "LotArea" variable so that the minimum value is above zero.
+
+```{r}
+shifted_LotArea <- train$LotArea - min(train$LotArea) + 1  # Shifted variable with minimum value above zero
+head(shifted_LotArea)
+```
+
+### Fit Exponential Distribution:
+
+```{r}
+library(MASS)
+fit_exp <- fitdistr(shifted_LotArea, "exponential")  # Fit exponential distribution
+lambda <- fit_exp$estimate  # Optimal lambda value
+head(lambda)
+```
+
+### Generate Samples from Exponential Distribution
+
+```{r}
+samples_exp <- rexp(1000, lambda)  # Generate 1000 samples from exponential distribution
+head(samples_exp)
+```
+
+### Plot Histograms
+
+```{r}
+hist(shifted_LotArea, main = "Histogram of Shifted LotArea", xlab = "Shifted LotArea", col = "seagreen", breaks = 30)
+hist(samples_exp, main = "Histogram of Samples from Exponential Distribution", xlab = "Samples", col = "pink", breaks = 30)
+
+```
+
+### Calculate Percentiles
+
+```{r}
+percentile_5 <- qexp(0.05, rate = lambda)  # 5th percentile using exponential distribution
+percentile_95 <- qexp(0.95, rate = lambda)  # 95th percentile using exponential distribution
+percentile_5
+percentile_95
+```
+
+### Calculate Confidence Interval & Calculate Empirical Percentiles
+
+```{r}
+# Calculate Empirical Percentiles
+mean_LotArea <- mean(shifted_LotArea)
+sd_LotArea <- sd(shifted_LotArea)
+conf_interval <- c(mean_LotArea - 1.96 * sd_LotArea / sqrt(length(shifted_LotArea)),
+                   mean_LotArea + 1.96 * sd_LotArea / sqrt(length(shifted_LotArea)))
+
+# Calculate Empirical Percentiles
+empirical_percentile_5 <- quantile(shifted_LotArea, 0.05)
+empirical_percentile_95 <- quantile(shifted_LotArea, 0.95)
+
+
+```
+
+### Display results:
+
+```{r}
+# Print Results
+print("Optimal Lambda for Exponential Distribution:")
+print(lambda)
+print("5th and 95th Percentiles using Exponential Distribution:")
+print(c(percentile_5, percentile_95))
+print("95% Confidence Interval from Empirical Data:")
+print(conf_interval)
+print("Empirical 5th and 95th Percentiles of Shifted LotArea:")
+
+```
+
+### Discussion:
+
+The results from this section help us understand the distributional properties of the "LotArea" variable and assess the suitability of the exponential distribution as a model. They provide valuable information for making inferences and decisions based on the data. More specifically: - By fitting an exponential probability density function to the shifted "LotArea" variable, we attempted to model its distribution with a known parametric form.The optimal λ value obtained from the fit represents the rate parameter of the exponential distribution, indicating the average rate of occurrence for "LotArea" values. - The comparison between the histograms of the original data and the fitted exponential distribution helps us assess the goodness-of-fit. Deviations between the two histograms may suggest limitations in the assumed distribution.In other words, this visual comparison of the histograms is an easily way to assess how well the exponential distribution fits the empirical data. If the histograms match closely, it suggests a good fit.
+
+-   Calculation of percentiles provides information about the spread and central tendency of the distribution.
+-   The 95% confidence interval we generated estimates the range within which the population mean of the shifted "LotArea" variable is likely to lie, assuming normality.
+-   We also calculated the empirical 5th and 95th percentiles directly from the shifted "LotArea" data.These percentiles provide a measure of the distribution's spread based on observed data.
+
+## Modeling
+
+### Simple linear regression
+
+```{r}
+
+data <- read.csv("https://raw.githubusercontent.com/Heleinef/Data-Science-Master_Heleine/main/train_csv.csv")
+train = data
+
+# Fit linear regression model
+lm_model <- lm(SalePrice ~ LotArea, data = train)
+
+# Get model summary
+summary(lm_model)
+
+```
+
+```{r}
+par(mfrow=c(1,1))
+plot(lm_model)
+```
+
+```{r}
+hist(lm_model$residuals)
+```
+
+#### Let's apply a Box-Cox Transformation to our model, in order to stabilize the variance and make the data more normally distributed.
+
+A [Box-Cox transformation](https://rpubs.com/R-Minator/SRBoxCox) is "an optimization algorithm designed to find the best powers to raise each variable so that the resulting distribution cannot be rejected."(Prof.Larry Fulton)
+
+```{r}
+# Load necessary libraries
+library(MASS)
+
+# Fit initial linear regression model
+lm_model <- lm(SalePrice ~ LotArea, data = train)
+
+# Apply Box-Cox transformation
+boxcox_result <- boxcox(lm_model, lambda = seq(-2, 2, by = 0.1))
+
+# Find the lambda value that maximizes the log-likelihood
+lambda_optimal <- boxcox_result$x[which.max(boxcox_result$y)]
+
+# Display the optimal lambda value
+cat("Optimal lambda for Box-Cox transformation:", lambda_optimal, "\n")
+
+# Transform the response variable using the optimal lambda
+if(lambda_optimal == 0) {
+  train$SalePrice_transformed <- log(train$SalePrice)
+} else {
+  train$SalePrice_transformed <- (train$SalePrice^lambda_optimal - 1) / lambda_optimal
+}
+
+# Fit the linear regression model again using the transformed response variable
+lm_model_transformed <- lm(SalePrice_transformed ~ LotArea, data = train)
+
+# Get model summary
+summary(lm_model_transformed)
+
+```
+
+```{r}
+par(mfrow=c(1,1))
+plot(lm_model_transformed )
+```
+
+```{r}
+hist(lm_model_transformed$residuals)
+```
+
+## Multiple Regression
+
+```{r}
+# Fit A multiple regression model
+# Load necessary libraries
+library(dplyr)
+
+# Load the dataset
+data <- read.csv("https://raw.githubusercontent.com/Heleinef/Data-Science-Master_Heleine/main/train_csv.csv")
+train = data
+
+# Convert categorical variables to factors
+train$KitchenQual <- as.factor(train$KitchenQual)
+
+# Fit the multiple regression model with the specified variables, excluding Neighborhood
+lmModel <- lm(SalePrice ~ LotArea + GrLivArea + PoolArea + GarageCars + KitchenQual+OverallCond+ Neighborhood,data = train)
+
+# Get model summary
+summary(lmModel)
+
+
+```
+
+### **Key Findings and main takeaways from the model summary and results:**
+
+**Residuals:**
+
+Min 1Q Median 3Q Max -333611 -16485 -432 15491 245336
+
+**The residuals represent the difference between observed and predicted values. The median residual being close to zero suggests that the model is unbiased,** though the wide range indicates there are some large discrepancies between predicted and actual sale prices.
+
+Significant Predictors:
+
+-   LotArea and GrLivArea have a positive effect on SalePrice.
+
+-   GarageCars significantly increases SalePrice.
+
+-   Kitchen Quality has a strong impact, with lower qualities (Fair, Good, Typical/Average) significantly reducing the sale price compared to Excellent quality.
+
+-   Overall Condition positively affects the sale price. Several Neighborhoods significantly affect sale prices, either positively or negatively.
+
+    Non-significant Predictors:
+
+-   Pool Area does not significantly affect the sale price and Many neighborhoods do not have a significant impact compared to the baseline. Model Fit
+
+-   Our model **explains a substantial portion of the variance (80.56%), indicating a good fit**. The residual standard error suggests some variability in sale prices is not explained by the model, indicating room for improvement.
+
+Overall, our regression model provides a comprehensive understanding of the factors influencing house prices. Significant predictors like lot area, living area, garage capacity, kitchen quality, and overall condition are crucial determinants of sale prices. Additionally, neighborhood effects highlight the importance of location. **The model fits the data well, explaining over 80% of the variance, but there is potential for further refinement and improvement.**
+
+### Model Diagnostics: Checking the assumptions of linearity for the lmModel we have created:
+
+```{r}
+library(car)
+# checking for multicollinearity
+
+# Fit the multiple regression model again 
+lmModel <- lm(SalePrice ~ LotArea + GrLivArea + PoolArea + GarageCars + KitchenQual + OverallCond + Neighborhood, data = train)
+
+# Check for multicollinearity using Variance Inflation Factor (VIF)
+vif_values <- vif(lmModel)
+print(vif_values)
+```
+
+### Interpreting the multicollinearity check of our model
+
+The multicollinearity check of our model reveals that: - LotArea, GrLivArea, PoolArea, GarageCars, and OverallCond have VIF values close to 1, indicating low multicollinearity. - KitchenQual has a VIF of 2.68, which is slightly above 1, but still within an acceptable range, suggesting moderate multicollinearity. - Neighborhood has a VIF of 5.01, which is higher than the usual threshold of 5, indicating potential multicollinearity issues. This suggests that the Neighborhood variable may have strong linear relationships with other predictor variables in the model. Action: We will apply a regularization technique called box transformation
+
+```{r}
+# Check for heteroscedasticity using the score test
+score_test <- ncvTest(lmModel)
+print(score_test)
+
+```
+
+In this case, the p-value is extremely small (p \< 2.22e-16), indicating strong evidence against the null hypothesis of homoscedasticity. Therefore, we reject the null hypothesis and conclude that there is heteroscedasticity present in the model. Because the presence of heteroscedasticity can lead to inefficient and biased estimates of the coefficients, we will apply a box- transformation algorithm to our model at to mitigate heteroscedasticity issue.
+
+```{r}
+# Plot residuals vs fitted values to visually inspect heteroscedasticity
+plot(lmModel, which = 1)
+
+# Check for normality of residuals using the Shapiro-Wilk test
+shapiro_test_result <- shapiro.test(lmModel$residuals)
+print(shapiro_test_result)
+
+```
+
+```{r}
+# Plot Q-Q plot of residuals to visually inspect normality
+qqnorm(lmModel$residuals)
+qqline(lmModel$residuals)
+
+# Plot histogram of residuals
+hist(lmModel$residuals, breaks = 30, main = "Histogram of Residuals", xlab = "Residuals")
+```
+
+```{r}
+# Additional diagnostic plots
+par(mfrow = c(1, 1))
+plot(lmModel)
+par(mfrow = c(1, 1))
+```
+
+```{r}
+# Load necessary library
+library(car)
+
+# Check if lmModel contains predictor variables
+if (length(lmModel$coefficients) > 1) {
+  # Calculate VIF values
+  vif_values <- vif(lmModel)
+  
+  # Print VIF values
+  print(vif_values)
+} else {
+  print("No predictor variables found in the linear regression model.")
+}
+
+
+```
+
+```{r}
+# Visual check for heteroscedasticity
+ggplot(train, aes(fitted(lmModel), residuals(lmModel))) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  labs(title = "Residuals vs Fitted", x = "Fitted values", y = "Residuals")
+
+```
+
+```{r}
+# Visual check for normality
+qqplot <- ggplot(data.frame(residuals = lmModel$residuals), aes(sample = residuals)) +
+  stat_qq() + 
+  stat_qq_line() + 
+  labs(title = "Q-Q Plot of Residuals", x = "Theoretical Quantiles", y = "Sample Quantiles")
+# Histogram of residuals
+histogram <- ggplot(data.frame(residuals = lmModel$residuals), aes(x = residuals)) + 
+  geom_histogram(aes(y = ..density..), bins = 30) + 
+  geom_density(col = "seagreen") + 
+  labs(title = "Histogram of Residuals", x = "Residuals", y = "Density")
+# Combine the plots
+grid.arrange(qqplot, histogram, ncol = 2)
+```
+
+### Box-Transformation of our lmModel
+
+```{r}
+# Fit the linear regression model
+lmModel <- lm(SalePrice ~ LotArea + GrLivArea + PoolArea + GarageCars + KitchenQual + OverallCond + Neighborhood, data = train)
+
+# Determine optimal lambda value for Box-Cox transformation
+boxcox_lambda <- boxcox(lmModel)
+
+# Apply Box-Cox transformation using the optimal lambda
+transformed_lmModel <- lm(SalePrice ~ LotArea + GrLivArea + PoolArea + GarageCars + KitchenQual + OverallCond + Neighborhood, 
+                          data = train, 
+                          lambda = boxcox_lambda$x[which.max(boxcox_lambda$y)])
+```
+
+```{r}
+hist(transformed_lmModel$residuals)
+```
